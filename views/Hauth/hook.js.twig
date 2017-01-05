@@ -1,0 +1,53 @@
+require(['hook'], function (hookQueue) {
+    hookQueue.register(function (Core) {
+        var addProviderLinks = false;
+
+        Core.Mediator.subscribe('on:form:preRender', function (config) {
+            {% if bb.token %}
+            if ('current_user' === config.form_name) {
+                addProviderLinks = true;
+            }
+            {% else %}
+            if ('bb-auth' === config.form_name) {
+                addProviderLinks = true;
+
+                var link = document.createElement("link");
+                link.type = "text/css";
+                link.rel = "stylesheet";
+                link.href = '{{ this.getResourceUrl('/hauth-bundle/css/font-awesome.min.css') }}';
+                document.getElementsByTagName("head")[0].appendChild(link);
+            }
+            {% endif %}
+        });
+
+        Core.Mediator.subscribe('on:form:render', function (form) {
+            if (addProviderLinks) {
+                {% if bb.token %}
+                jQuery(form).after('<div class="hauth"><hr/><strong>Enable authentication throw:</strong><br/>\n\
+                    {% for provider, config in providers %}
+                        <a class="btn {{ config.activated ? 'hauth-activated' : '' }}" href="{{ entrypoint }}?p={{ provider }}&f=rest_api_area" style="float: left;" title="{{ config.activated ? 'Disable' : 'Enable' }} {{ provider }}"><i class="fa {{ config['fa-icon'] is defined ? config['fa-icon'] : 'fa-' ~ provider|lower }}" style="font-family: FontAwesome;font-size: 18px; color:{{ config.activated ? 'black' : 'silver' }}"></i></a>\n\
+                    {% endfor %}
+                </div>');
+
+                jQuery('.hauth a').on('click', function(e) {
+                    window.open(jQuery(e.currentTarget).attr('href'), 'hauth', 'menubar=no,toolbar=no,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400');
+                    return false;
+                });
+                {% else %}
+                jQuery(form).after('<div class="hauth"><hr/><strong>Or connect throw your favorite network:</strong><br/>\n\
+                    {% for provider, config in providers %}
+                        <a class="btn" href="{{ entrypoint }}?p={{ provider }}&f=rest_api_area" style="float: left;" title="Connect with {{ provider }}"><i class="fa {{ config['fa-icon'] is defined ? config['fa-icon'] : 'fa-' ~ provider|lower }}" style="font-family: FontAwesome;font-size: 18px;"></i></a>\n\
+                    {% endfor %}
+                </div>');
+
+                jQuery('.hauth a').on('click', function(e) {
+                    window.open(jQuery(e.currentTarget).attr('href'), 'hauth', 'menubar=no,toolbar=no,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400');
+                    return false;
+                });
+                {% endif %}
+
+                addProviderLinks = false;
+            }
+        });
+    });
+});

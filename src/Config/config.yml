@@ -7,7 +7,11 @@ bundle:
     config_per_site: true
     bundle_loader_recipes:
         route: [LpDigital\Bundle\HAuthBundle\Config\Configurator, loadRoutes]
+        template: [LpDigital\Bundle\HAuthBundle\Config\Configurator, loadViews]
+    admin_controller:
+        admin: LpDigital\Bundle\HAuthBundle\Controller\AdminController
 
 hybridauth:
+    firewalls: ['rest_api_area']
     base_url: /hauth.html
     debug_mode: false

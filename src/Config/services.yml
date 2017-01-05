@@ -1,4 +1,10 @@
 services:
+    hauth.listener:
+        class: LpDigital\Bundle\HAuthBundle\Listener\HAuthListener
+        arguments: [@bundle.hauth]
     hauth.controller:
         class: LpDigital\Bundle\HAuthBundle\Controller\HAuthController
-        arguments: [@bundle.hauth]
+        arguments: [@bundle.hauth, @event.dispatcher]
+    hauth.rest_api_area.listener:
+        class: LpDigital\Bundle\HAuthBundle\Listener\BBRestApiListener
+        arguments: [@bundle.hauth, 'rest_api_area']
