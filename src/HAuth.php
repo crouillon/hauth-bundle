@@ -22,6 +22,7 @@
 namespace LpDigital\Bundle\HAuthBundle;
 
 use BackBee\Bundle\AbstractBundle;
+use BackBee\Utils\Collection\Collection;
 
 /**
  * Description of HAuth
@@ -33,11 +34,60 @@ use BackBee\Bundle\AbstractBundle;
 class HAuth extends AbstractBundle
 {
 
-    public function start()
+    /**
+     * Returns the HydridAuth configuration.
+     *
+     * @return array
+     */
+    public function getHybridAuthConfig()
     {
-        
+        $authConfig = $this->getConfig()->getHybridauthConfig();
+        if (!is_array($authConfig)) {
+            return [];
+        }
+
+        return $authConfig;
     }
 
+    /**
+     * Return an array of valid and enabled providers.
+     *
+     * @return string[]
+     *
+     * @codeCoverageIgnore
+     */
+    public function getProviders()
+    {
+        return Collection::get($this->getHybridAuthConfig(), 'providers', []);
+    }
+
+    /**
+     * Is the provider valid and enabled?
+     *
+     * @param  string  $provider A provider id.
+     *
+     * @return boolean           True if $provider exists and is enabled, False, otherwise.
+     */
+    public function hasProvider($provider)
+    {
+        return true === Collection::get($this->getHybridAuthConfig(), 'providers:' . $provider . ':enabled');
+    }
+
+    /**
+     * Method to call when we get the bundle for the first time.
+     *
+     * @codeCoverageIgnore
+     */
+    public function start()
+    {
+
+    }
+
+    /**
+     * Method to call before stop or destroy of current bundle.
+     *
+     * @codeCoverageIgnore
+     */
     public function stop()
     {
 
