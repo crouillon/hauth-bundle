@@ -22,8 +22,8 @@
 namespace LpDigital\Bundle\HAuthBundle;
 
 use BackBee\Bundle\AbstractBundle;
-use BackBee\Utils\Collection\Collection;
 use BackBee\Config\Config;
+use BackBee\Utils\Collection\Collection;
 
 /**
  * Description of HAuth

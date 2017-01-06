@@ -22,6 +22,11 @@
 namespace LpDigital\Bundle\HAuthBundle\Test\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+
+use BackBee\Site\Site;
+
+use LpDigital\Bundle\HAuthBundle\Config\Configurator;
+use LpDigital\Bundle\HAuthBundle\Controller\HAuthController;
 use LpDigital\Bundle\HAuthBundle\Test\HAuthBundleCase;
 
 /**
@@ -35,17 +40,42 @@ use LpDigital\Bundle\HAuthBundle\Test\HAuthBundleCase;
  */
 class HAuthControllerTest extends HAuthBundleCase
 {
+    /**
+     * @var HAuthController
+     */
+    private $controller;
+
+    /**
+     * Fix up the fixtures.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->controller = $this->application->getContainer()->get('hauth.controller');
+    }
 
     /**
      * @covers LpDigital\Bundle\HAuthBundle\Controller\HAuthController::startSession()
      */
     public function testStartSession()
     {
-        $controller = $this->application->getContainer()->get('hauth.controller');
-
         $request = new Request();
-        self::invokeMethod($controller, 'startSession', [$request]);
+        self::invokeMethod($this->controller, 'startSession', [$request]);
 
         $this->assertTrue($request->getSession()->isStarted());
+    }
+
+    /**
+     * @covers LpDigital\Bundle\HAuthBundle\Controller\HAuthController::getHydridAuthConfig()
+     */
+    public function testGetHydridAuthConfig()
+    {
+        $site = new Site();
+        $site->setServerName('www.backbee.com');
+        $this->application->getContainer()->set('site', $site);
+        $authConfig = self::invokeMethod($this->controller, 'getHydridAuthConfig');
+
+        $this->assertEquals('http://www.backbee.com/hauth.html', $authConfig['base_url']);
     }
 }

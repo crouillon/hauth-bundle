@@ -22,8 +22,12 @@
 namespace LpDigital\Bundle\HAuthBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use LpDigital\Bundle\HAuthBundle\HAuth;
+
+
+
+use LpDigital\Bundle\HAuthBundle\Config\Configurator;
 use LpDigital\Bundle\HAuthBundle\Entity\UserProfile;
+use LpDigital\Bundle\HAuthBundle\HAuth;
 
 /**
  * HybridAuth controller.
@@ -101,12 +105,30 @@ class HAuthController
      */
     private function hybridAuth($provider)
     {
-        $hybridAuth = new \Hybrid_Auth($this->bundle->getHybridAuthConfig());
+        $hybridAuth = new \Hybrid_Auth($this->getHydridAuthConfig());
         $adapter = $hybridAuth->authenticate($provider);
 
         $userProfile = $adapter->getUserProfile();
         $userProfile['network'] = $provider;
 
         return new UserProfile($userProfile);
+    }
+
+    /**
+     * Computes Hybridauth configuration array.
+     *
+     * @return array
+     */
+    private function getHydridAuthConfig()
+    {
+        $authConfig = HAuth::getHybridAuthConfig($this->bundle->getConfig());
+        if (isset($authConfig['base_url'])) {
+            $authConfig['base_url'] = $this->bundle
+                    ->getApplication()
+                    ->getRouting()
+                    ->getUrlByRouteName(Configurator::$routeName, null, null, true, $this->bundle->getApplication()->getSite());
+        }
+
+        return $authConfig;
     }
 }

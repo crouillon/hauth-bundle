@@ -24,6 +24,7 @@ namespace LpDigital\Bundle\HAuthBundle\Config;
 use BackBee\ApplicationInterface;
 use BackBee\Config\Config;
 use BackBee\Utils\Collection\Collection;
+
 use LpDigital\Bundle\HAuthBundle\HAuth;
 
 /**
