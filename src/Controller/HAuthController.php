@@ -108,7 +108,7 @@ class HAuthController
         $hybridAuth = new \Hybrid_Auth($this->getHydridAuthConfig());
         $adapter = $hybridAuth->authenticate($provider);
 
-        $userProfile = $adapter->getUserProfile();
+        $userProfile = (array) $adapter->getUserProfile();
         $userProfile['network'] = $provider;
 
         return new UserProfile($userProfile);

@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 use BackBee\Site\Site;
 
-use LpDigital\Bundle\HAuthBundle\Config\Configurator;
 use LpDigital\Bundle\HAuthBundle\Controller\HAuthController;
 use LpDigital\Bundle\HAuthBundle\Test\HAuthBundleCase;
 
