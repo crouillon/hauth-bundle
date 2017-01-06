@@ -41,6 +41,11 @@ class HAuthBundleCase extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * @var MockBBApplication
+     */
+    protected $application;
+
+    /**
      * @var HAuth
      */
     protected $bundle;
@@ -69,8 +74,8 @@ class HAuthBundleCase extends \PHPUnit_Framework_TestCase
         vfsStream::umask(0000);
         vfsStream::setup('repositorydir', 0777, $mockConfig);
 
-        $application = new MockBBApplication(null, null, false, $mockConfig, __DIR__ . '/../vendor');
-        $this->bundle = $application->getBundle('hauth');
+        $this->application = new MockBBApplication(null, null, false, $mockConfig, __DIR__ . '/../vendor');
+        $this->bundle = $this->application->getBundle('hauth');
         $this->bundle->getConfig()->setSection('hybridauth', Yaml::parse(file_get_contents(__DIR__ . '/Config/hybridauth.yml')));
     }
 

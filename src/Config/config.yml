@@ -1,0 +1,13 @@
+bundle:
+    name: Hybrid Authentication bundle
+    description: hauth-bundle enables to easily implement social signin on BackBee instances throw hybridauth/hydridauth library.
+    author: Charles Rouillon <charles.rouillon@lp-digital.fr>
+    version: 1.0
+    enable: true
+    config_per_site: true
+    bundle_loader_recipes:
+        route: [LpDigital\Bundle\HAuthBundle\Config\Configurator, loadRoutes]
+
+hybridauth:
+    base_url: /hauth.html
+    debug_mode: false

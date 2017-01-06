@@ -1,0 +1,4 @@
+services:
+    hauth.controller:
+        class: LpDigital\Bundle\HAuthBundle\Controller\HAuthController
+        arguments: [@bundle.hauth]

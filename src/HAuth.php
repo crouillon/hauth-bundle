@@ -23,6 +23,7 @@ namespace LpDigital\Bundle\HAuthBundle;
 
 use BackBee\Bundle\AbstractBundle;
 use BackBee\Utils\Collection\Collection;
+use BackBee\Config\Config;
 
 /**
  * Description of HAuth
@@ -37,11 +38,13 @@ class HAuth extends AbstractBundle
     /**
      * Returns the HydridAuth configuration.
      *
+     * @param  Config $config The bundle configuration object.
+     *
      * @return array
      */
-    public function getHybridAuthConfig()
+    public static function getHybridAuthConfig(Config $config)
     {
-        $authConfig = $this->getConfig()->getHybridauthConfig();
+        $authConfig = $config->getHybridauthConfig();
         if (!is_array($authConfig)) {
             return [];
         }
@@ -58,7 +61,7 @@ class HAuth extends AbstractBundle
      */
     public function getProviders()
     {
-        return Collection::get($this->getHybridAuthConfig(), 'providers', []);
+        return Collection::get(self::getHybridAuthConfig($this->getConfig()), 'providers', []);
     }
 
     /**
@@ -70,7 +73,7 @@ class HAuth extends AbstractBundle
      */
     public function hasProvider($provider)
     {
-        return true === Collection::get($this->getHybridAuthConfig(), 'providers:' . $provider . ':enabled');
+        return true === Collection::get(self::getHybridAuthConfig($this->getConfig()), 'providers:' . $provider . ':enabled');
     }
 
     /**
