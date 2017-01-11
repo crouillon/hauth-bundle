@@ -21,9 +21,14 @@
 
 namespace LpDigital\Bundle\HAuthBundle;
 
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
 use BackBee\Bundle\AbstractBundle;
 use BackBee\Config\Config;
 use BackBee\Utils\Collection\Collection;
+
+use LpDigital\Bundle\HAuthBundle\Config\Configurator;
 
 /**
  * Description of HAuth
@@ -53,15 +58,71 @@ class HAuth extends AbstractBundle
     }
 
     /**
-     * Return an array of valid and enabled providers.
+     * Returns the URL to the entry point to HydridHauth.
+     *
+     * @return string|null
+     */
+    public function getHAuthEntryPoint()
+    {
+        $routing = $this->getApplication()->getRouting();
+        if (null === $routing->get(Configurator::$entryPointRouteName)) {
+            return null;
+        }
+
+        return $this->getApplication()
+                    ->getRouting()
+                    ->getUrlByRouteName(
+                            Configurator::$entryPointRouteName,
+                            null,
+                            null,
+                            true,
+                            $this->getApplication()->getSite()
+                    );
+    }
+
+    /**
+     * Return an array of valid providers.
+     *
+     * @param  boolean  $enabledOnly If true, filter enabled providers (default: false).
      *
      * @return string[]
-     *
-     * @codeCoverageIgnore
      */
-    public function getProviders()
+    public function getProviders($enabledOnly = false)
     {
-        return Collection::get(self::getHybridAuthConfig($this->getConfig()), 'providers', []);
+        $providers = Collection::get(self::getHybridAuthConfig($this->getConfig()), 'providers', []);
+
+        if (true === $enabledOnly) {
+            $providers = array_filter($providers, function($var) {
+                return isset($var['enabled']) && true === $var['enabled'];
+            });
+        }
+
+        return $providers;
+    }
+
+    /**
+     * Returns an array of existing social signins for token.
+     *
+     * @param  TokenInterface|null $token The token to look for social signins
+     *                                    (default: current token).
+     *
+     * @return SocialSignIn[]
+     */
+    public function getActiveProvidersFromToken(TokenInterface $token = null)
+    {
+        if (null === $token) {
+            $token = $this->getApplication()->getSecurityContext()->getToken();
+        }
+
+        if (null === $token) {
+            return [];
+        }
+
+        $identity = UserSecurityIdentity::fromToken($token);
+
+        return $this->getEntityManager()
+                ->getRepository(Entity\SocialSignIn::class)
+                ->findBy(['strIdentity' => $identity]);
     }
 
     /**
@@ -73,7 +134,21 @@ class HAuth extends AbstractBundle
      */
     public function hasProvider($provider)
     {
-        return true === Collection::get(self::getHybridAuthConfig($this->getConfig()), 'providers:' . $provider . ':enabled');
+        $config = self::getHybridAuthConfig($this->getConfig());
+
+        return true === Collection::get($config, 'providers:' . $provider . ':enabled');
+    }
+
+    /**
+     * Is HybridAuth enabled for BackBee Rest Api?
+     *
+     * @return boolean
+     */
+    public function isRestFirewallEnabled()
+    {
+        $firewalls = Collection::get(self::getHybridAuthConfig($this->getConfig()), 'firewalls');
+
+        return in_array(Configurator::$apiFirewallId, $firewalls);
     }
 
     /**

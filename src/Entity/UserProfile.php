@@ -26,12 +26,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Stores the normalized user profile used by HybridAuth.
  *
- * @manufacturer Lp digital - http://www.lp-digital.fr
  * @copyright    ©2017 - Lp digital
  * @author       Charles Rouillon <charles.rouillon@lp-digital.fr>
  *
  * @ORM\Entity
- * @ORM\Table(name="bbx_userprofile")
+ * @ORM\Table(name="bbx_hauth_userprofile")
  */
 class UserProfile
 {

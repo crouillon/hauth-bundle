@@ -1,0 +1,6 @@
+nestednode.page.render:
+    listeners:
+        - [@hauth.listener, onPageRender]
+hauth.auth.success:
+    listeners:
+        - [@hauth.rest_api_area.listener, handle]

@@ -21,13 +21,15 @@
 
 namespace LpDigital\Bundle\HAuthBundle\Controller;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
+use BackBee\Renderer\RendererInterface;
 
-
-use LpDigital\Bundle\HAuthBundle\Config\Configurator;
 use LpDigital\Bundle\HAuthBundle\Entity\UserProfile;
 use LpDigital\Bundle\HAuthBundle\HAuth;
+use LpDigital\Bundle\HAuthBundle\Listener\Event\HAuthEvent;
 
 /**
  * HybridAuth controller.
@@ -47,31 +49,85 @@ class HAuthController
     protected $bundle;
 
     /**
+     * The current instance of the renderer.
+     *
+     * @var RendererInterface
+     */
+    protected $renderer;
+
+    /**
+     * An event dispatcher.
+     *
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * Controller constructor.
      *
      * @param Hauth $bundle
      */
-    public function __construct(HAuth $bundle)
+    public function __construct(HAuth $bundle, EventDispatcherInterface $eventDispatcher = null)
     {
         $this->bundle = $bundle;
+        $this->renderer = $bundle->getApplication()->getRenderer();
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * Computes and returns the hook javascript file to interact with BackBee toolbar.
+     *
+     * @return Response
+     */
+    public function hookAction()
+    {
+        if (!$this->bundle->isRestFirewallEnabled()) {
+            return new Response('Not Found', Response::HTTP_NOT_FOUND);
+        }
+
+        $providers = $this->bundle->getProviders(true);
+
+        $socialSignin = $this->bundle->getActiveProvidersFromToken();
+        foreach ($socialSignin as $activated) {
+            if (isset($providers[$activated->getNetworkId()])) {
+                $providers[$activated->getNetworkId()]['activated'] = true;
+            }
+        }
+
+        $entryPoint = $this->bundle->getHAuthEntryPoint();
+        $content = $this->renderer->partial('Hauth/hook.js.twig', ['entrypoint' => $entryPoint, 'providers' => $providers]);
+
+        return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/javascript']);
     }
 
     /**
      * HybridAuth entry point.
      *
-     * @param Request $request
+     * @param  Request $request
+     *
+     * @return Response
      */
     public function hAuthAction(Request $request)
     {
         // Ensure session exists and is started, required by HybridAuth.
         $this->startSession($request);
 
-        $provider = $request->get('provider', '');
-        if ($this->bundle->hasProvider($provider)) {
-            $userProfile = $this->hybridAuth($provider);
+        $provider = $request->get('p', '');
+        $firewall = $request->get('f', '');
 
-            var_dump($userProfile);
-            return;
+        if ($this->bundle->hasProvider($provider)) {
+            try {
+                $response = new Response('');
+                $profile = $this->hybridAuth($provider);
+                $event = new HAuthEvent($profile, $response, $firewall);
+                $this->eventDispatcher->dispatch('hauth.auth.success', $event);
+
+                return $event->getResponse();
+            } catch (\Exception $ex) {
+                $this->bundle->getApplication()->error('hauth-bundle: '.$ex->getMessage());
+
+                return new Response('Something went wrong!', Response::HTTP_FORBIDDEN);
+            }
         }
 
         \Hybrid_Endpoint::process();
@@ -123,10 +179,7 @@ class HAuthController
     {
         $authConfig = HAuth::getHybridAuthConfig($this->bundle->getConfig());
         if (isset($authConfig['base_url'])) {
-            $authConfig['base_url'] = $this->bundle
-                    ->getApplication()
-                    ->getRouting()
-                    ->getUrlByRouteName(Configurator::$routeName, null, null, true, $this->bundle->getApplication()->getSite());
+            $authConfig['base_url'] = $this->bundle->getHAuthEntryPoint();
         }
 
         return $authConfig;

@@ -28,12 +28,11 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
  * A social network account association to a BackBee security identity.
  * Only one association per network is allowed for one BackBee identity.
  *
- * @manufacturer Lp digital - http://www.lp-digital.fr
  * @copyright    ©2017 - Lp digital
  * @author       Charles Rouillon <charles.rouillon@lp-digital.fr>
  *
  * @ORM\Entity
- * @ORM\Table(name="bbx_socialsignin")
+ * @ORM\Table(name="bbx_hauth_socialsignin")
  */
 class SocialSignIn
 {
