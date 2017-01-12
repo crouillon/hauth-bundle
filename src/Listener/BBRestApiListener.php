@@ -110,6 +110,8 @@ class BBRestApiListener implements ListenerInterface
             'hasToken' => ($this->securityContext->getToken() instanceof BBUserToken),
             'status' => Response::HTTP_FORBIDDEN,
             'message' => 'Invalid authentication informations',
+            'profile' => null,
+            'network' => $event->getUserProfile()->network
         ];
 
         if ($params['hasToken']) {
@@ -124,7 +126,9 @@ class BBRestApiListener implements ListenerInterface
 
                 $params['status'] = Response::HTTP_OK;
                 $params['message'] = sprintf('Authentication throw %s enabled.', $event->getUserProfile()->network);
+                $params['profile'] = $event->getUserProfile();
             } else {
+                $this->bundle->removeUserProfile($event->getUserProfile());
                 $this->bundle->getEntityManager()->remove($socialSignin);
 
                 $params['status'] = Response::HTTP_OK;

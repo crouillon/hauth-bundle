@@ -1,6 +1,23 @@
 {% if hasToken %}
 <script type="text/javascript">
     if (window.opener) {
+        var jQuery = window.opener.require('jquery');
+        {% if profile %}
+            var firstname = jQuery.find('#current-user-popin input[name=firstname]'),
+                lastname = jQuery.find('#current-user-popin input[name=lastname]'),
+                email = jQuery.find('#current-user-popin input[name=email]');
+            
+            if ('' === jQuery(firstname).val()) { jQuery(firstname).val('{{ profile.__get('firstName') }}'); }
+            if ('' === jQuery(lastname).val()) { jQuery(lastname).val('{{ profile.__get('lastName') }}'); }
+            if ('' === jQuery(email).val()) { jQuery(email).val('{{ profile.__get('emailVerified') }}'); }
+            
+            jQuery(jQuery.find('#current-user-popin a.hauth-{{ network }}')).attr('title', 'Disable {{ profile.__get('network') }}');
+            jQuery(jQuery.find('#current-user-popin a.hauth-{{ network }} i')).css('color', 'black');
+        {% else %}
+            jQuery(jQuery.find('#current-user-popin a.hauth-{{ network }}')).attr('title', 'Enable {{ profile.__get('network') }}');
+            jQuery(jQuery.find('#current-user-popin a.hauth-{{ network }} i')).css('color', 'silver');
+        {% endif %}
+
         window.opener.require("component!notify").success("{{ message }}");
     }
     window.close();

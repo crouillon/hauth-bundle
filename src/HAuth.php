@@ -23,12 +23,11 @@ namespace LpDigital\Bundle\HAuthBundle;
 
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use BackBee\Bundle\AbstractBundle;
 use BackBee\Config\Config;
 use BackBee\Utils\Collection\Collection;
-
 use LpDigital\Bundle\HAuthBundle\Config\Configurator;
+use LpDigital\Bundle\HAuthBundle\Entity\UserProfile;
 
 /**
  * Description of HAuth
@@ -70,14 +69,14 @@ class HAuth extends AbstractBundle
         }
 
         return $this->getApplication()
-                    ->getRouting()
-                    ->getUrlByRouteName(
-                            Configurator::$entryPointRouteName,
-                            null,
-                            null,
-                            true,
-                            $this->getApplication()->getSite()
-                    );
+                        ->getRouting()
+                        ->getUrlByRouteName(
+                                Configurator::$entryPointRouteName,
+                                null,
+                                null,
+                                true,
+                                $this->getApplication()->getSite()
+        );
     }
 
     /**
@@ -121,8 +120,8 @@ class HAuth extends AbstractBundle
         $identity = UserSecurityIdentity::fromToken($token);
 
         return $this->getEntityManager()
-                ->getRepository(Entity\SocialSignIn::class)
-                ->findBy(['strIdentity' => $identity]);
+                        ->getRepository(Entity\SocialSignIn::class)
+                        ->findBy(['strIdentity' => $identity]);
     }
 
     /**
@@ -149,6 +148,56 @@ class HAuth extends AbstractBundle
         $firewalls = Collection::get(self::getHybridAuthConfig($this->getConfig()), 'firewalls');
 
         return in_array(Configurator::$apiFirewallId, $firewalls);
+    }
+
+    /**
+     * Gets a UserProfile from the received user profile and stores it if need.
+     *
+     * @param  array $profile
+     *
+     * @return UserProfile
+     */
+    public function storeUserProfile(array $profile)
+    {
+        $userProfile = new UserProfile($profile);
+
+        if (true === Collection::get(self::getHybridAuthConfig($this->getConfig()), 'store_user_profile')) {
+            $userProfile = $this->getEntityManager()
+                    ->getRepository(UserProfile::class)
+                    ->find(['network' => $profile['network'], 'identifier' => $profile['identifier']]);
+
+            if (null === $userProfile) {
+                $userProfile = new UserProfile();
+            }
+
+            $userProfile->hydrateProfile($profile);
+
+            $this->getEntityManager()->persist($userProfile);
+            $this->getEntityManager()->flush($userProfile);
+        }
+
+        return $userProfile;
+    }
+
+    /**
+     * Removes the UserProfile from database.
+     *
+     * @param  UserProfile $userProfile
+     *
+     * @return UserProfile
+     */
+    public function removeUserProfile(UserProfile $userProfile)
+    {
+        $existing = $userProfile = $this->getEntityManager()
+                    ->getRepository(UserProfile::class)
+                    ->find(['network' => $userProfile->network, 'identifier' => $userProfile->identifier]);
+
+        if (null !== $existing) {
+            $this->getEntityManager()->remove($existing);
+            $this->getEntityManager()->flush($existing);
+        }
+
+        return $userProfile;
     }
 
     /**

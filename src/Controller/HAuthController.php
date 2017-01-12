@@ -167,7 +167,7 @@ class HAuthController
         $userProfile = (array) $adapter->getUserProfile();
         $userProfile['network'] = $provider;
 
-        return new UserProfile($userProfile);
+        return $this->bundle->storeUserProfile($userProfile);
     }
 
     /**

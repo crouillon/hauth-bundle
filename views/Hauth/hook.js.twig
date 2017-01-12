@@ -25,7 +25,7 @@ require(['hook'], function (hookQueue) {
                 {% if bb.token %}
                 jQuery(form).after('<div class="hauth"><hr/><strong>Enable authentication throw:</strong><br/>\n\
                     {% for provider, config in providers %}
-                        <a class="btn" href="{{ entrypoint }}?p={{ provider }}&f=rest_api_area" style="float: left;" title="{{ config.activated ? 'Disable' : 'Enable' }} {{ provider }}"><i class="fa {{ config['fa-icon'] is defined ? config['fa-icon'] : 'fa-' ~ provider|lower }}" style="font-family: FontAwesome;font-size: 24px; color:{{ config.activated ? 'black' : 'silver' }}"></i></a>\n\
+                        <a class="btn hauth-{{ provider }}" href="{{ entrypoint }}?p={{ provider }}&f=rest_api_area" style="float: left;" title="{{ config.activated ? 'Disable' : 'Enable' }} {{ provider }}"><i class="fa {{ config['fa-icon'] is defined ? config['fa-icon'] : 'fa-' ~ provider|lower }}" style="font-family: FontAwesome;font-size: 24px; color:{{ config.activated ? 'black' : 'silver' }}"></i></a>\n\
                     {% endfor %}
                 </div>');
                 {% else %}

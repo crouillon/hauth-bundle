@@ -12,6 +12,7 @@ bundle:
         admin: LpDigital\Bundle\HAuthBundle\Controller\AdminController
 
 hybridauth:
+    store_user_profile: true
     firewalls: ['rest_api_area']
     base_url: /hauth.html
     debug_mode: false
