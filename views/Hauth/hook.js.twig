@@ -1,4 +1,5 @@
 require(['hook'], function (hookQueue) {
+{% if providers|length %}
     hookQueue.register(function (Core) {
         var addProviderLinks = false;
 
@@ -20,7 +21,7 @@ require(['hook'], function (hookQueue) {
             {% endif %}
         });
 
-        Core.Mediator.subscribe('on:form:render', function (form) {
+        Core.Mediator.subscribe('on:form:render', function (form) {            
             if (addProviderLinks) {
                 {% if bb.token %}
                 jQuery(form).after('<div class="hauth"><hr/><strong>Enable authentication throw:</strong><br/>\n\
@@ -54,4 +55,5 @@ require(['hook'], function (hookQueue) {
             }
         });
     });
+{% endif %}
 });

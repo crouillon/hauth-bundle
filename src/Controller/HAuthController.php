@@ -106,6 +106,8 @@ class HAuthController
      * @param  Request $request
      *
      * @return Response
+     *
+     * @codeCoverageIgnore
      */
     public function hAuthAction(Request $request)
     {

@@ -21,11 +21,16 @@
 
 namespace LpDigital\Bundle\HAuthBundle\Test\Controller;
 
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 use BackBee\Site\Site;
 
 use LpDigital\Bundle\HAuthBundle\Controller\HAuthController;
+use LpDigital\Bundle\HAuthBundle\Entity\SocialSignIn;
+use LpDigital\Bundle\HAuthBundle\Entity\UserProfile;
 use LpDigital\Bundle\HAuthBundle\Test\HAuthBundleCase;
 
 /**
@@ -51,7 +56,52 @@ class HAuthControllerTest extends HAuthBundleCase
     {
         parent::setUp();
 
+        $em = $this->bundle->getEntityManager();
+        $metadata = [
+            $em->getClassMetadata(Site::class),
+            $em->getClassMetadata(SocialSignIn::class),
+            $em->getClassMetadata(UserProfile::class),
+        ];
+
+        $schema = new SchemaTool($em);
+        $schema->createSchema($metadata);
+
+        $site = new Site('site_uid', ['label' => 'site label']);
+        $em->persist($site);
+        $em->flush($site);
+
+        $this->application->getContainer()->set('site', $site);
         $this->controller = $this->application->getContainer()->get('hauth.controller');
+    }
+
+    /**
+     * @covers LpDigital\Bundle\HAuthBundle\Controller\HAuthController::hookAction()
+     */
+    public function testHookAction()
+    {
+        $this->createAuthenticatedUser();
+
+        $SocialSignin = new SocialSignIn(
+                $this->application->getSite(),
+                UserSecurityIdentity::fromToken($this->application->getBBUserToken()),
+                'Google', 'GoogleId');
+        $this->bundle->getEntityManager()->persist($SocialSignin);
+        $this->bundle->getEntityManager()->flush($SocialSignin);
+
+        $response = $this->controller->hookAction();
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertEquals('text/javascript', $response->headers->get('Content-Type'));
+        $this->assertContains('/hauth.html', $response->getContent());
+        $this->assertContains('Google', $response->getContent());
+        $this->assertNotContains('Facebook', $response->getContent());
+
+        $this->bundle->getConfig()->setSection('hybridauth', ['base_url' => '/hauth.html', 'firewalls' => []], true);
+        $responseNotFound = $this->controller->hookAction();
+
+        $this->assertInstanceOf(Response::class, $responseNotFound);
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $responseNotFound->getStatusCode());
     }
 
     /**
