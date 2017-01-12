@@ -1,6 +1,3 @@
-bundles:
-    hauth: LpDigital\Bundle\HAuthBundle\HAuth
-
 doctrine:
     dbal:
         driver: pdo_sqlite

@@ -62,6 +62,7 @@ class HAuthBundleCase extends \PHPUnit_Framework_TestCase
             'Config' => [
                 'bootstrap.yml' => file_get_contents(__DIR__ . '/Config/bootstrap.yml'),
                 'config.yml' => file_get_contents(__DIR__ . '/Config/config.yml'),
+                'bundles.yml' => file_get_contents(__DIR__ . '/Config/bundles.yml'),
                 'services.yml' => file_get_contents(__DIR__ . '/Config/services.yml'),
             ],
             'cache' => [

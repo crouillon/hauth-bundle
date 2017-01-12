@@ -21,8 +21,12 @@
 
 namespace LpDigital\Bundle\HAuthBundle\Test\Config;
 
+use org\bovigo\vfs\vfsStream;
+
+use BackBee\Config\Config;
+use BackBee\Tests\Mock\MockBBApplication;
+
 use LpDigital\Bundle\HAuthBundle\Config\Configurator;
-use LpDigital\Bundle\HAuthBundle\Test\HAuthBundleCase;
 
 /**
  * Tests suite for Configurator class.
@@ -33,11 +37,88 @@ use LpDigital\Bundle\HAuthBundle\Test\HAuthBundleCase;
  *
  * @covers LpDigital\Bundle\HAuthBundle\Config\Configurator
  */
-class ConfiguratorTest extends HAuthBundleCase
+class ConfiguratorTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var MockBBApplication
+     */
+    protected $application;
+
+    /**
+     * Sets up the required fixtures.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $mockConfig = [
+            'ClassContent' => [],
+            'Config' => [
+                'bootstrap.yml' => file_get_contents(__DIR__ . '/bootstrap.yml'),
+                'config.yml' => file_get_contents(__DIR__ . '/config.yml'),
+                'services.yml' => file_get_contents(__DIR__ . '/services.yml'),
+            ],
+            'cache' => [
+                'container' => [],
+                'twig' => []
+            ],
+            'log' => []
+        ];
+
+        vfsStream::umask(0000);
+        vfsStream::setup('repositorydir', 0777, $mockConfig);
+
+        $this->application = new MockBBApplication(null, null, false, $mockConfig, __DIR__ . '/../../vendor');
+    }
+
+    /**
+     * @covers LpDigital\Bundle\HAuthBundle\Config\Configurator::loadRoutes()
+     */
+    public function testLoadRoutes()
+    {
+        $config = new Config(__DIR__);
+        Configurator::loadRoutes($this->application, $config);
+
+        $this->assertEquals('/hauth.html', $this->application->getRouting()->getRoutePath(Configurator::$entryPointRouteName));
+        $this->assertEquals('/hauth-bundle/hook.js', $this->application->getRouting()->getRoutePath(Configurator::$bbHookRouteName));
+    }
+
+    /**
+     * @covers LpDigital\Bundle\HAuthBundle\Config\Configurator::addEntryPointRoute()
+     */
     public function testLoadEmptyRoutes()
     {
-        $this->assertEquals('/hauth.html', $this->application->getRouting()->getRoutePath(Configurator::$routeName));
+        $config = new Config(__DIR__);
+        $config->setSection('hybridauth', ['base_url' => null]);
+        Configurator::loadRoutes($this->application, $config);
+
+        $this->assertNull($this->application->getRouting()->getRoutePath(Configurator::$entryPointRouteName));
+        $this->assertNull($this->application->getRouting()->getRoutePath(Configurator::$bbHookRouteName));
+    }
+
+    /**
+     * @covers LpDigital\Bundle\HAuthBundle\Config\Configurator::addHookRoute()
+     */
+    public function testLoadPartialRoutes()
+    {
+        $config = new Config(__DIR__);
+        $config->setSection('hybridauth', ['base_url' => '/hauth.html', 'firewalls' => []], true);
+        Configurator::loadRoutes($this->application, $config);
+
+        $this->assertEquals('/hauth.html', $this->application->getRouting()->getRoutePath(Configurator::$entryPointRouteName));
+        $this->assertNull($this->application->getRouting()->getRoutePath(Configurator::$bbHookRouteName));
+    }
+
+    /**
+     * @covers LpDigital\Bundle\HAuthBundle\Config\Configurator::loadViews()
+     */
+    public function testLoadViews()
+    {
+        $config = new Config(__DIR__);
+        Configurator::loadViews($this->application, $config);
+        $renderer = $this->application->getContainer()->get('renderer')->dump();
+
+        $this->assertTrue(in_array(realpath(__DIR__ . '/../../views'), $renderer['template_directories']));
     }
 }
