@@ -25,26 +25,30 @@ require(['hook'], function (hookQueue) {
                 {% if bb.token %}
                 jQuery(form).after('<div class="hauth"><hr/><strong>Enable authentication throw:</strong><br/>\n\
                     {% for provider, config in providers %}
-                        <a class="btn {{ config.activated ? 'hauth-activated' : '' }}" href="{{ entrypoint }}?p={{ provider }}&f=rest_api_area" style="float: left;" title="{{ config.activated ? 'Disable' : 'Enable' }} {{ provider }}"><i class="fa {{ config['fa-icon'] is defined ? config['fa-icon'] : 'fa-' ~ provider|lower }}" style="font-family: FontAwesome;font-size: 18px; color:{{ config.activated ? 'black' : 'silver' }}"></i></a>\n\
+                        <a class="btn" href="{{ entrypoint }}?p={{ provider }}&f=rest_api_area" style="float: left;" title="{{ config.activated ? 'Disable' : 'Enable' }} {{ provider }}"><i class="fa {{ config['fa-icon'] is defined ? config['fa-icon'] : 'fa-' ~ provider|lower }}" style="font-family: FontAwesome;font-size: 24px; color:{{ config.activated ? 'black' : 'silver' }}"></i></a>\n\
                     {% endfor %}
                 </div>');
-
-                jQuery('.hauth a').on('click', function(e) {
-                    window.open(jQuery(e.currentTarget).attr('href'), 'hauth', 'menubar=no,toolbar=no,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400');
-                    return false;
-                });
                 {% else %}
                 jQuery(form).after('<div class="hauth"><hr/><strong>Or connect throw your favorite network:</strong><br/>\n\
                     {% for provider, config in providers %}
                         <a class="btn" href="{{ entrypoint }}?p={{ provider }}&f=rest_api_area" style="float: left;" title="Connect with {{ provider }}"><i class="fa {{ config['fa-icon'] is defined ? config['fa-icon'] : 'fa-' ~ provider|lower }}" style="font-family: FontAwesome;font-size: 18px;"></i></a>\n\
                     {% endfor %}
                 </div>');
+                {% endif %}
 
                 jQuery('.hauth a').on('click', function(e) {
-                    window.open(jQuery(e.currentTarget).attr('href'), 'hauth', 'menubar=no,toolbar=no,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400');
+                    var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+                    var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
+
+                    var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+                    var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+                    var left = ((width / 2) - 200) + dualScreenLeft;
+                    var top = ((height / 2) - 200) + dualScreenTop;
+
+                    window.open(jQuery(e.currentTarget).attr('href'), 'hauth', 'menubar=no,toolbar=no,scrollbars=yes,resizable=yes,top=' + top +',left=' + left + ',width=400,height=400');
                     return false;
                 });
-                {% endif %}
 
                 addProviderLinks = false;
             }
