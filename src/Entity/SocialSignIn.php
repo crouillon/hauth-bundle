@@ -23,6 +23,7 @@ namespace LpDigital\Bundle\HAuthBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+
 use BackBee\Site\Site;
 
 /**

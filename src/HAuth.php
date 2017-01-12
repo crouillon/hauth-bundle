@@ -23,9 +23,11 @@ namespace LpDigital\Bundle\HAuthBundle;
 
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
 use BackBee\Bundle\AbstractBundle;
 use BackBee\Config\Config;
 use BackBee\Utils\Collection\Collection;
+
 use LpDigital\Bundle\HAuthBundle\Config\Configurator;
 use LpDigital\Bundle\HAuthBundle\Entity\UserProfile;
 
