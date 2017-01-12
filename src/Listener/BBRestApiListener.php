@@ -117,6 +117,7 @@ class BBRestApiListener implements ListenerInterface
         if ($params['hasToken']) {
             if (null === $socialSignin = $this->getSocialSignin($event)) {
                 $socialSignin = new SocialSignIn(
+                        $this->bundle->getApplication()->getSite(),
                         UserSecurityIdentity::fromToken($this->securityContext->getToken()),
                         $event->getUserProfile()->network,
                         $event->getUserProfile()->identifier
@@ -197,7 +198,7 @@ class BBRestApiListener implements ListenerInterface
         return $this->bundle
                         ->getEntityManager()
                         ->getRepository(SocialSignIn::class)
-                        ->findOneBy(['networkId' => $profile->network, 'networkUserId' => $profile->identifier]);
+                        ->findOneBy(['site' => $this->bundle->getApplication()->getSite(), 'networkId' => $profile->network, 'networkUserId' => $profile->identifier]);
     }
 
     /**

@@ -23,6 +23,7 @@ namespace LpDigital\Bundle\HAuthBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use BackBee\Site\Site;
 
 /**
  * A social network account association to a BackBee security identity.
@@ -36,6 +37,17 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
  */
 class SocialSignIn
 {
+
+    /**
+     * A BackBee site.
+     *
+     * @var Site
+     *
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="BackBee\Site\Site", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="site_uid", referencedColumnName="uid")
+     */
+    protected $site;
 
     /**
      * A symfony Security Identity.
@@ -85,12 +97,14 @@ class SocialSignIn
     /**
      * Class constructor.
      *
+     * @param Site                 $site          A BackBee site.
      * @param UserSecurityIdentity $identity      A backbee security identity account.
      * @param string               $networkId     A network  identifier.
      * @param string               $networkUserId The user's unique id for network.
      */
-    public function __construct(UserSecurityIdentity $identity, $networkId, $networkUserId)
+    public function __construct(Site $site, UserSecurityIdentity $identity, $networkId, $networkUserId)
     {
+        $this->site = $site;
         $this->setIdentity($identity);
         $this->networkId = $networkId;
         $this->networkUserId = $networkUserId;
@@ -106,6 +120,16 @@ class SocialSignIn
     {
         $this->identity = $identity;
         $this->strIdentity = $this->identity->__toString();
+    }
+
+    /**
+     * Returns the site.
+     *
+     * @return Site
+     */
+    public function getSite()
+    {
+        return $this->site;
     }
 
     /**

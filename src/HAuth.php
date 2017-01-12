@@ -121,7 +121,7 @@ class HAuth extends AbstractBundle
 
         return $this->getEntityManager()
                         ->getRepository(Entity\SocialSignIn::class)
-                        ->findBy(['strIdentity' => $identity]);
+                        ->findBy(['site' => $this->getApplication()->getSite(), 'strIdentity' => $identity]);
     }
 
     /**
