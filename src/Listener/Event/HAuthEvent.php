@@ -24,6 +24,8 @@ namespace LpDigital\Bundle\HAuthBundle\Listener\Event;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
 
+
+
 use LpDigital\Bundle\HAuthBundle\Entity\UserProfile;
 
 /**

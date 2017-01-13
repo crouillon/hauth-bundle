@@ -1,19 +1,11 @@
+store_user_profile: false
+firewalls: ['rest_api_area']
 base_url: /hauth.html
 debug_mode: false
 providers:
     Google:
         enabled: true
-        keys:
-            id: 517246945544-oanhj0rp5pq2oi3lco5m06fos6po0tl8.apps.googleusercontent.com
-            secret: lkG3b_UriOEgZjKZPFxbGrZG
     Facebook:
         enabled: false
-        keys:
-            id: 173319553146349
-            secret: 5b9c1cab7ede3c705cf53c415c078e1d
-        trustForwarded: false
     Twitter:
         enabled: true
-        keys:
-            key: NJRFSEEwApcaNSaqvbWF2ShDQ
-            secret: 07DDDK6x4XE1QfSkO77DDho5diNtuK9b5TnqcRA0drVnJx6u43

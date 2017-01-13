@@ -23,6 +23,7 @@ namespace LpDigital\Bundle\HAuthBundle\Listener;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Exception\DisabledException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -110,11 +111,14 @@ class BBRestApiListener implements ListenerInterface
             'hasToken' => ($this->securityContext->getToken() instanceof BBUserToken),
             'status' => Response::HTTP_FORBIDDEN,
             'message' => 'Invalid authentication informations',
+            'profile' => null,
+            'network' => $event->getUserProfile()->network
         ];
 
         if ($params['hasToken']) {
             if (null === $socialSignin = $this->getSocialSignin($event)) {
                 $socialSignin = new SocialSignIn(
+                        $this->bundle->getApplication()->getSite(),
                         UserSecurityIdentity::fromToken($this->securityContext->getToken()),
                         $event->getUserProfile()->network,
                         $event->getUserProfile()->identifier
@@ -124,7 +128,9 @@ class BBRestApiListener implements ListenerInterface
 
                 $params['status'] = Response::HTTP_OK;
                 $params['message'] = sprintf('Authentication throw %s enabled.', $event->getUserProfile()->network);
+                $params['profile'] = $event->getUserProfile();
             } else {
+                $this->bundle->removeUserProfile($event->getUserProfile());
                 $this->bundle->getEntityManager()->remove($socialSignin);
 
                 $params['status'] = Response::HTTP_OK;
@@ -193,7 +199,7 @@ class BBRestApiListener implements ListenerInterface
         return $this->bundle
                         ->getEntityManager()
                         ->getRepository(SocialSignIn::class)
-                        ->findOneBy(['networkId' => $profile->network, 'networkUserId' => $profile->identifier]);
+                        ->findOneBy(['site' => $this->bundle->getApplication()->getSite(), 'networkId' => $profile->network, 'networkUserId' => $profile->identifier]);
     }
 
     /**
@@ -210,6 +216,8 @@ class BBRestApiListener implements ListenerInterface
         try {
             return $this->userProvider->loadUserByUsername($identity->getUsername());
         } catch (UsernameNotFoundException $ex) {
+            return null;
+        } catch (DisabledException $ex) {
             return null;
         }
     }

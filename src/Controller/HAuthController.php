@@ -95,7 +95,7 @@ class HAuthController
         }
 
         $entryPoint = $this->bundle->getHAuthEntryPoint();
-        $content = $this->renderer->partial('Hauth/hook.js.twig', ['entrypoint' => $entryPoint, 'providers' => $providers]);
+        $content = $this->renderer->partial('HAuth/hook.js.twig', ['entrypoint' => $entryPoint, 'providers' => $providers]);
 
         return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/javascript']);
     }
@@ -106,6 +106,8 @@ class HAuthController
      * @param  Request $request
      *
      * @return Response
+     *
+     * @codeCoverageIgnore
      */
     public function hAuthAction(Request $request)
     {
@@ -143,11 +145,6 @@ class HAuthController
         if (!$request->hasSession()) {
             $request->setSession($this->bundle->getApplication()->getSession());
         }
-
-        $session = $request->getSession();
-        if (!$session->isStarted()) {
-            $session->start();
-        }
     }
 
     /**
@@ -167,7 +164,7 @@ class HAuthController
         $userProfile = (array) $adapter->getUserProfile();
         $userProfile['network'] = $provider;
 
-        return new UserProfile($userProfile);
+        return $this->bundle->storeUserProfile($userProfile);
     }
 
     /**

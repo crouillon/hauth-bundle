@@ -24,6 +24,7 @@ namespace LpDigital\Bundle\HAuthBundle\Test\Entity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 use BackBee\Security\User;
+use BackBee\Site\Site;
 
 use LpDigital\Bundle\HAuthBundle\Entity\SocialSignIn;
 
@@ -44,12 +45,14 @@ class SocialSignInTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
+        $site = new Site();
         $identity = new UserSecurityIdentity('fake', User::class);
         $networkId = 'social network';
         $networkUserId = 'user id';
 
-        $socialsignin = new SocialSignIn($identity, $networkId, $networkUserId);
+        $socialsignin = new SocialSignIn($site, $identity, $networkId, $networkUserId);
 
+        $this->assertEquals($site, $socialsignin->getSite());
         $this->assertEquals($identity, $socialsignin->getIdentity());
         $this->assertEquals($networkId, $socialsignin->getNetworkId());
         $this->assertEquals($networkUserId, $socialsignin->getNetworkUserId());
@@ -63,7 +66,7 @@ class SocialSignInTest extends \PHPUnit_Framework_TestCase
     public function testIdentity()
     {
         $expected = new UserSecurityIdentity('fake', User::class);
-        $socialsignin = new SocialSignIn($expected, 'social network', 'user id');
+        $socialsignin = new SocialSignIn(new Site(), $expected, 'social network', 'user id');
 
         $reflection = new \ReflectionClass($socialsignin);
         $identity = $reflection->getProperty('identity');
