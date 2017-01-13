@@ -24,6 +24,7 @@ namespace LpDigital\Bundle\HAuthBundle\Listener;
 use BackBee\Event\Event;
 use BackBee\Renderer\AbstractRenderer;
 
+use LpDigital\Bundle\HAuthBundle\Config\Configurator;
 use LpDigital\Bundle\HAuthBundle\HAuth;
 
 /**
@@ -69,9 +70,9 @@ class HAuthListener
             return;
         }
 
-        $renderer->addFooterScript($this->bundle
+        $renderer->addFooterJs($this->bundle
                     ->getApplication()
                     ->getRouting()
-                    ->getUrlByRouteName(\LpDigital\Bundle\HAuthBundle\Config\Configurator::$bbHookRouteName, null, null, true, $this->bundle->getApplication()->getSite()));
+                    ->getUrlByRouteName(Configurator::$bbHookRouteName, null, null, true, $this->bundle->getApplication()->getSite()));
     }
 }
