@@ -29,6 +29,7 @@ use BackBee\Config\Config;
 use BackBee\Utils\Collection\Collection;
 
 use LpDigital\Bundle\HAuthBundle\Config\Configurator;
+use LpDigital\Bundle\HAuthBundle\Entity\SocialSignIn;
 use LpDigital\Bundle\HAuthBundle\Entity\UserProfile;
 
 /**
@@ -122,7 +123,7 @@ class HAuth extends AbstractBundle
         $identity = UserSecurityIdentity::fromToken($token);
 
         return $this->getEntityManager()
-                        ->getRepository(Entity\SocialSignIn::class)
+                        ->getRepository(SocialSignIn::class)
                         ->findBy(['site' => $this->getApplication()->getSite(), 'strIdentity' => $identity]);
     }
 
@@ -190,7 +191,7 @@ class HAuth extends AbstractBundle
      */
     public function removeUserProfile(UserProfile $userProfile)
     {
-        $existing = $userProfile = $this->getEntityManager()
+        $existing = $this->getEntityManager()
                     ->getRepository(UserProfile::class)
                     ->find(['network' => $userProfile->network, 'identifier' => $userProfile->identifier]);
 
