@@ -23,6 +23,7 @@ namespace LpDigital\Bundle\HAuthBundle\Listener;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Exception\DisabledException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -215,6 +216,8 @@ class BBRestApiListener implements ListenerInterface
         try {
             return $this->userProvider->loadUserByUsername($identity->getUsername());
         } catch (UsernameNotFoundException $ex) {
+            return null;
+        } catch (DisabledException $ex) {
             return null;
         }
     }

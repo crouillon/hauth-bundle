@@ -145,11 +145,6 @@ class HAuthController
         if (!$request->hasSession()) {
             $request->setSession($this->bundle->getApplication()->getSession());
         }
-
-        $session = $request->getSession();
-        if (!$session->isStarted()) {
-            $session->start();
-        }
     }
 
     /**
