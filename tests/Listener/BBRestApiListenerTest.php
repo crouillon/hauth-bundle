@@ -129,7 +129,7 @@ class BBRestApiListenerTest extends HAuthBundleCase
         $this->listener->handle($eventOk);
         $this->assertContains('.success("Authentication throw network enabled.")', $eventOk->getResponse()->getContent());
         $this->assertEquals(Response::HTTP_OK, $eventOk->getResponse()->getStatusCode());
-        $this->assertEquals($socialSignIn, $this->invokeMethod($this->listener, 'getSocialSignin', [$eventOk]));
+        $this->assertNotNull($this->invokeMethod($this->listener, 'getSocialSignin', [$eventOk]));
     }
 
     /**

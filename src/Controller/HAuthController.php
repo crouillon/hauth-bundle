@@ -95,7 +95,7 @@ class HAuthController
         }
 
         $entryPoint = $this->bundle->getHAuthEntryPoint();
-        $content = $this->renderer->partial('Hauth/hook.js.twig', ['entrypoint' => $entryPoint, 'providers' => $providers]);
+        $content = $this->renderer->partial('HAuth/hook.js.twig', ['entrypoint' => $entryPoint, 'providers' => $providers]);
 
         return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/javascript']);
     }
