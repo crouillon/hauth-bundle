@@ -66,6 +66,10 @@ class HAuthListener
             return;
         }
 
+        if (!$this->bundle->getApplication()->getContainer()->has('bundle.toolbar')) {
+            return;
+        }
+
         if (!$this->bundle->isRestFirewallEnabled()) {
             return;
         }
