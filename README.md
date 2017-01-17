@@ -2,6 +2,8 @@ hauth-bundle
 ============
 
 [![Build Status](https://travis-ci.org/Lp-digital/hauth-bundle.svg?branch=master)](https://travis-ci.org/Lp-digital/hauth-bundle)
+[![Code Climate](https://codeclimate.com/github/Lp-digital/hauth-bundle/badges/gpa.svg)](https://codeclimate.com/github/Lp-digital/hauth-bundle)
+[![Test Coverage](https://codeclimate.com/github/Lp-digital/hauth-bundle/badges/coverage.svg)](https://codeclimate.com/github/Lp-digital/hauth-bundle/coverage)
 
 **hauth-bundle** enables to easily implement social signin on BackBee instances throw [hybridauth/hydridauth](http://hybridauth.sourceforge.net/) library.
 
