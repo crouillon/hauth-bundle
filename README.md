@@ -1,9 +1,7 @@
 hauth-bundle
 ============
 
-[![build status](http://gitlab.lp-lab.com/lpdigital/hauth-bundle/badges/master/build.svg)](http://gitlab.lp-lab.com/lpdigital/hauth-bundle/commits/master)
-[![coverage report](http://gitlab.lp-lab.com/lpdigital/hauth-bundle/badges/master/coverage.svg)](http://gitlab.lp-lab.com/lpdigital/hauth-bundle/commits/master)
-
+[![Build Status](https://travis-ci.org/Lp-digital/hauth-bundle.svg?branch=master)](https://travis-ci.org/Lp-digital/hauth-bundle)
 
 **hauth-bundle** enables to easily implement social signin on BackBee instances throw [hybridauth/hydridauth](http://hybridauth.sourceforge.net/) library.
 
