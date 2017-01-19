@@ -91,7 +91,7 @@ class HAuth extends AbstractBundle
      */
     public function getProviders($enabledOnly = false)
     {
-        $providers = Collection::get(self::getHybridAuthConfig($this->getConfig()), 'providers', []);
+        $providers = Collection::get(static::getHybridAuthConfig($this->getConfig()), 'providers', []);
 
         if (true === $enabledOnly) {
             $providers = array_filter($providers, function($var) {
@@ -136,7 +136,7 @@ class HAuth extends AbstractBundle
      */
     public function hasProvider($provider)
     {
-        $config = self::getHybridAuthConfig($this->getConfig());
+        $config = static::getHybridAuthConfig($this->getConfig());
 
         return true === Collection::get($config, 'providers:' . $provider . ':enabled');
     }
@@ -148,7 +148,7 @@ class HAuth extends AbstractBundle
      */
     public function isRestFirewallEnabled()
     {
-        $firewalls = Collection::get(self::getHybridAuthConfig($this->getConfig()), 'firewalls');
+        $firewalls = Collection::get(static::getHybridAuthConfig($this->getConfig()), 'firewalls');
 
         return in_array(Configurator::$apiFirewallId, $firewalls);
     }
@@ -164,7 +164,7 @@ class HAuth extends AbstractBundle
     {
         $userProfile = new UserProfile($profile);
 
-        if (true === Collection::get(self::getHybridAuthConfig($this->getConfig()), 'store_user_profile')) {
+        if (true === Collection::get(static::getHybridAuthConfig($this->getConfig()), 'store_user_profile')) {
             $userProfile = $this->getEntityManager()
                     ->getRepository(UserProfile::class)
                     ->find(['network' => $profile['network'], 'identifier' => $profile['identifier']]);

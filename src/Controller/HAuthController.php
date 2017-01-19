@@ -174,7 +174,7 @@ class HAuthController
      */
     private function getHydridAuthConfig()
     {
-        $authConfig = HAuth::getHybridAuthConfig($this->bundle->getConfig());
+        $authConfig = call_user_func_array([$this->bundle, 'getHybridAuthConfig'], [$this->bundle->getConfig()]);
         if (isset($authConfig['base_url'])) {
             $authConfig['base_url'] = $this->bundle->getHAuthEntryPoint();
         }
