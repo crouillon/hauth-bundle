@@ -64,10 +64,6 @@ class HAuthListenerTest extends HAuthBundleCase
         $this->listener->onPageRender(new Event(new Page()));
         $this->assertNull($bag->get('js_footer'));
 
-        $this->bundle->getConfig()->setSection('hybridauth', ['firewalls' => []], true);
-        $this->listener->onPageRender(new Event(new Page(), $this->application->getRenderer()));
-        $this->assertNull($bag->get('js_footer'));
-
         $this->bundle->getConfig()->setSection('hybridauth', ['firewalls' => ['rest_api_area']], true);
         $this->listener->onPageRender(new Event(new Page(), $this->application->getRenderer()));
         $this->assertNull($bag->get('js_footer'));
@@ -80,6 +76,10 @@ class HAuthListenerTest extends HAuthBundleCase
     {
         $this->application->getContainer()->set('bundle.toolbar', $this->bundle);
         $bag = $this->invokeProperty($this->application->getRenderer(), 'externalResources');
+
+        $this->bundle->getConfig()->setSection('hybridauth', ['firewalls' => []], true);
+        $this->listener->onPageRender(new Event(new Page(), $this->application->getRenderer()));
+        $this->assertNull($bag->get('js_footer'));
 
         $this->bundle->getConfig()->setSection('hybridauth', ['firewalls' => ['rest_api_area']], true);
         $this->listener->onPageRender(new Event(new Page(), $this->application->getRenderer()));

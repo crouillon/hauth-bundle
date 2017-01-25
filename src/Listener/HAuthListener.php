@@ -75,8 +75,14 @@ class HAuthListener
         }
 
         $renderer->addFooterJs($this->bundle
-                    ->getApplication()
-                    ->getRouting()
-                    ->getUrlByRouteName(Configurator::$bbHookRouteName, null, null, true, $this->bundle->getApplication()->getSite()));
+                        ->getApplication()
+                        ->getRouting()
+                        ->getUrlByRouteName(
+                            Configurator::$bbHookRouteName,
+                            null,
+                            null,
+                            true,
+                            $this->bundle->getApplication()->getSite()
+                        ));
     }
 }

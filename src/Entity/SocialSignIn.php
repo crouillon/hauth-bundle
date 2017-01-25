@@ -141,10 +141,9 @@ class SocialSignIn
     public function getIdentity()
     {
         $matches = [];
-        if (
-                null === $this->identity
-                && is_string($this->strIdentity)
-                && preg_match('/^UserSecurityIdentity\(([^,]+), (.+)\)$/', $this->strIdentity, $matches)
+        if (null === $this->identity
+            && is_string($this->strIdentity)
+            && preg_match('/^UserSecurityIdentity\(([^,]+), (.+)\)$/', $this->strIdentity, $matches)
         ) {
             $this->identity = new UserSecurityIdentity($matches[1], $matches[2]);
         }

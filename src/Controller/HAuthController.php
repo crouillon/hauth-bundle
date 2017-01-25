@@ -65,7 +65,8 @@ class HAuthController
     /**
      * Controller constructor.
      *
-     * @param Hauth $bundle
+     * @param Hauth                    $bundle          A hauth-bundle instance.
+     * @param EventDispatcherInterface $eventDispatcher Optional, an event dispatcher.
      */
     public function __construct(HAuth $bundle, EventDispatcherInterface $eventDispatcher = null)
     {
@@ -95,7 +96,10 @@ class HAuthController
         }
 
         $entryPoint = $this->bundle->getHAuthEntryPoint();
-        $content = $this->renderer->partial('HAuth/hook.js.twig', ['entrypoint' => $entryPoint, 'providers' => $providers]);
+        $content = $this->renderer->partial(
+            'HAuth/hook.js.twig',
+            ['entrypoint' => $entryPoint, 'providers' => $providers]
+        );
 
         return new Response($content, Response::HTTP_OK, ['Content-Type' => 'text/javascript']);
     }
