@@ -118,10 +118,10 @@ class BBRestApiListener implements ListenerInterface
         if ($params['hasToken']) {
             if (null === $socialSignin = $this->getSocialSignin($event)) {
                 $socialSignin = new SocialSignIn(
-                        $this->bundle->getApplication()->getSite(),
-                        UserSecurityIdentity::fromToken($this->securityContext->getToken()),
-                        $event->getUserProfile()->network,
-                        $event->getUserProfile()->identifier
+                    $this->bundle->getApplication()->getSite(),
+                    UserSecurityIdentity::fromToken($this->securityContext->getToken()),
+                    $event->getUserProfile()->network,
+                    $event->getUserProfile()->identifier
                 );
 
                 $this->bundle->getEntityManager()->persist($socialSignin);
@@ -138,8 +138,7 @@ class BBRestApiListener implements ListenerInterface
             }
 
             $this->bundle->getEntityManager()->flush($socialSignin);
-        } elseif (
-                (null !== $socialSignIn = $this->getSocialSignin($event))
+        } elseif ((null !== $socialSignIn = $this->getSocialSignin($event))
                 && (null !== $user = $this->getBackBeeUser($socialSignIn))
                 && (null !== $token = $this->getAuthenticatedToken($user))
         ) {
@@ -163,7 +162,9 @@ class BBRestApiListener implements ListenerInterface
      */
     public function supportEvent(HAuthEvent $event)
     {
-        return $this->bundle->isRestFirewallEnabled() && $this->firewallId === $event->getFirewallId() && null !== $this->getUserProvider();
+        return $this->bundle->isRestFirewallEnabled()
+                && $this->firewallId === $event->getFirewallId()
+                && null !== $this->getUserProvider();
     }
 
     /**
@@ -199,7 +200,11 @@ class BBRestApiListener implements ListenerInterface
         return $this->bundle
                         ->getEntityManager()
                         ->getRepository(SocialSignIn::class)
-                        ->findOneBy(['site' => $this->bundle->getApplication()->getSite(), 'networkId' => $profile->network, 'networkUserId' => $profile->identifier]);
+                        ->findOneBy([
+                            'site' => $this->bundle->getApplication()->getSite(),
+                            'networkId' => $profile->network,
+                            'networkUserId' => $profile->identifier
+                        ]);
     }
 
     /**

@@ -74,12 +74,12 @@ class HAuth extends AbstractBundle
         return $this->getApplication()
                         ->getRouting()
                         ->getUrlByRouteName(
-                                Configurator::$entryPointRouteName,
-                                null,
-                                null,
-                                true,
-                                $this->getApplication()->getSite()
-        );
+                            Configurator::$entryPointRouteName,
+                            null,
+                            null,
+                            true,
+                            $this->getApplication()->getSite()
+                        );
     }
 
     /**
@@ -94,7 +94,7 @@ class HAuth extends AbstractBundle
         $providers = Collection::get(static::getHybridAuthConfig($this->getConfig()), 'providers', []);
 
         if (true === $enabledOnly) {
-            $providers = array_filter($providers, function($var) {
+            $providers = array_filter($providers, function ($var) {
                 return isset($var['enabled']) && true === $var['enabled'];
             });
         }
@@ -192,8 +192,8 @@ class HAuth extends AbstractBundle
     public function removeUserProfile(UserProfile $userProfile)
     {
         $existing = $this->getEntityManager()
-                    ->getRepository(UserProfile::class)
-                    ->find(['network' => $userProfile->network, 'identifier' => $userProfile->identifier]);
+                ->getRepository(UserProfile::class)
+                ->find(['network' => $userProfile->network, 'identifier' => $userProfile->identifier]);
 
         if (null !== $existing) {
             $this->getEntityManager()->remove($existing);
@@ -210,7 +210,6 @@ class HAuth extends AbstractBundle
      */
     public function start()
     {
-
     }
 
     /**
@@ -220,6 +219,5 @@ class HAuth extends AbstractBundle
      */
     public function stop()
     {
-
     }
 }
