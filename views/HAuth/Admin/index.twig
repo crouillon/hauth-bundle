@@ -1,0 +1,60 @@
+<div class="bb-bundle-content bundle-{{ hauth.getId() }}">
+    <form {{ this.bundleAdminForm('hauth.admin.save')|raw }} class="clearfix">
+        <div class="form-group">
+            <label for="base_url" class="label">Hydrid Authentication entry point</label>
+            <div>
+                <input type="text" class="form-control btn-radius" id="base_url" name="base_url" value="{{ config.base_url }}" />
+            </div>
+            <small class="text-muted">Leave empty to disable hybrid authentication on current website.</small>
+        </div>
+        <div class="form-group">
+            <div>
+                <label class="label">Store user's social profile data</label>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="store_user_profile" name="store_user_profile" value="true"{% if (config.store_user_profile) %} checked{% endif %} /> Enabled
+                    </label>
+                </div>
+            </div>
+            <small class="text-muted">Data returned and stored depends on the social provider and its scope.</small>
+        </div>
+        <div class="form-group">
+            <div>
+                <label class="label">Enable hydrid authentication on firewalls</label>
+                {% for firewall in firewalls %}
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="firewalls_{{ firewall }}" name="firewalls[]" value="{{ firewall }}"{% if (firewall in config.firewalls) %} checked{% endif %} /> {{ 'rest_api_area' == firewall ? 'BackBee toolbar' : firewall}}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="panel-group" id="providers">
+            {% for provider, conf in config.providers %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <a class="btn btn-white collapsed" data-toggle="collapse" data-parent="#providers" href="#collapse{{ provider }}"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i> {{ provider }}</a>
+                    </div>
+                </div>
+                <div id="collapse{{ provider }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="provider[{{provider]]}}][id]" class="label">Your provider application id</label>
+                            <div>
+                                <input type="text" class="form-control btn-radius" id="provider[{{provider]]}}][id]" name="provider[{{provider]]}}][id]" value="{{ config.base_url }}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <a href="#" class="btn btn-default-grey btn-sm"><i class="fa fa-trash"></i> Disable the provider</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-radius btn-default">Save</button>        
+    </form>
+            {{ dump(providers) }}
+</div>

@@ -10,6 +10,7 @@ bundle:
         template: [LpDigital\Bundle\HAuthBundle\Config\Configurator, loadViews]
     admin_controller:
         admin: LpDigital\Bundle\HAuthBundle\Controller\AdminController
+    admin_entry_point: admin.index
 
 hybridauth:
     store_user_profile: true
