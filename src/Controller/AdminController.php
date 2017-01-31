@@ -24,7 +24,6 @@ namespace LpDigital\Bundle\HAuthBundle\Controller;
 /**
  * Description of AdminController
  *
- * @manufacturer Lp digital - http://www.lp-digital.fr
  * @copyright    ©2017 - Lp digital
  * @author       Charles Rouillon <charles.rouillon@lp-digital.fr>
  */

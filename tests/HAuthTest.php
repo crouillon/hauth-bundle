@@ -34,7 +34,6 @@ use LpDigital\Bundle\HAuthBundle\HAuth;
 /**
  * Test suite for HAuth class.
  *
- * @manufacturer Lp digital - http://www.lp-digital.fr
  * @copyright    ©2017 - Lp digital
  * @author       Charles Rouillon <charles.rouillon@lp-digital.fr>
  *

@@ -40,7 +40,6 @@ use LpDigital\Bundle\HAuthBundle\Listener\Event\HAuthEvent;
 /**
  * Handles HAuth succeed authentication for BackBee Rest API.
  *
- * @manufacturer Lp digital - http://www.lp-digital.fr
  * @copyright    ©2017 - Lp digital
  * @author       Charles Rouillon <charles.rouillon@lp-digital.fr>
  */
