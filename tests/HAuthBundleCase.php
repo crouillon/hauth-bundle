@@ -33,7 +33,6 @@ use LpDigital\Bundle\HAuthBundle\HAuth;
 /**
  * Test case for hauth-bundle.
  *
- * @manufacturer Lp digital - http://www.lp-digital.fr
  * @copyright    ©2017 - Lp digital
  * @author       Charles Rouillon <charles.rouillon@lp-digital.fr>
  */
