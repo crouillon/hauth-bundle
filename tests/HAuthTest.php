@@ -86,6 +86,9 @@ class HAuthTest extends HAuthBundleCase
 
         Configurator::$entryPointRouteName = 'fake';
         $this->assertNull($this->bundle->getHAuthEntryPoint());
+
+        $this->bundle->getConfig()->setSection('hybridauth', ['base_url' => 'http://www.example.com', 'firewalls' => []], true);
+        $this->assertEquals('http://www.example.com', $this->bundle->getHAuthEntryPoint());
     }
 
     /**
