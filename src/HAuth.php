@@ -65,6 +65,11 @@ class HAuth extends AbstractBundle
      */
     public function getHAuthEntryPoint()
     {
+        $baseUrl = Collection::get(self::getHybridAuthConfig($this->getConfig()), 'base_url');
+        if (null !== parse_url($baseUrl, PHP_URL_SCHEME)) {
+            return $baseUrl;
+        }
+
         $routing = $this->getApplication()->getRouting();
         if (null === $routing->get(Configurator::$entryPointRouteName)) {
             return null;
