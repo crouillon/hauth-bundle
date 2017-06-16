@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": ">=5.6",
-        "backbee/backbee-php": "~1.2.1",
+        "backbee/backbee-php": ">=1.2.1",
         "hybridauth/hybridauth": "^2.8"
     },
     "autoload": {
